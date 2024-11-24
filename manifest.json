@@ -1,8 +1,8 @@
 {
-  "name": "Remove Ads from Photopea",
-  "description": "Hides the ads on Photopea",
-  "author": "Jared Schwalbe",
-  "version": "2.0.0",
+  "name": "CleanCue",
+  "description": "Hides the ads on Photopea and highlight the important content.",
+  "author": "Zhenghao He, Guanghui Min, Fenglin Zhang, Liyuan Hou, Yunfan Wang, Jared Schwalbe",
+  "version": "3.0.0",
   "manifest_version": 3,
   "icons": {
     "16": "img/icon16.png",
