@@ -55,14 +55,53 @@ function highlightButtons(selector) {
       button.classList.add('highlight');
   });
 }
-function highlightButtonsByTask(selector) {
-  const buttons = document.querySelectorAll(selector);
-  buttons.forEach(button => {
-      button.classList.add('highlight');
-  });
+function highlightButtonsByResize() {
+  const buttons = document.querySelectorAll('.topbar button');
+  const fileButton = buttons[0];
+  if (fileButton) {
+    // fileButton is the first button in the topbar
+    fileButton.classList.add('highlight');
+  }
+  // const toolbtn = document.querySelectorAll('.toolbtn');
+  // const btn_gsicon = toolbtn[4];
+  // if (btn_gsicon) {
+  //   btn_gsicon.classList.add('highlight');
+  // }
+
+  const cropButton = document.querySelector('div.sbar.toolbar > div > button:nth-child(5)');
+  cropButton.classList.add('highlight'); // 添加高亮类
+
+  const cancelButton = document.querySelector('button.fitem[title="Cancel"]');
+  const confirmButton = document.querySelector('button.fitem[title="Confirm"]');
+  
+  // 添加高亮
+  cancelButton.classList.add('highlight');
+  confirmButton.classList.add('highlight');
+  
+
+// //body > div.flexrow.app > div:nth-child(1) > div:nth-child(1) > div > div.body.flexrow > div:nth-child(2) > div > button:nth-child(6)
+//   const saveButton = document.querySelector('div.body.flexrow > div:nth-child(2) > div > button:nth-child(6)');
+//   saveButton.classList.add('highlight'); // 添加高亮类
+
 }
 
+function highlightButtonsByFormat() {
+}
 
+function highlightButtonsByRotate() {
+}
+function highlightBasedOnSelection(selectedValue) {
+  if (selectedValue === 'option1') {
+    console.log('Highlighting buttons to resize the image...');
+    highlightButtonsByResize(); // 调用具体的高亮逻辑
+  } else if (selectedValue === 'option2') {
+    console.log('Highlighting buttons to change image file format...');
+    highlightButtonsByFormat();
+  } else if (selectedValue === 'option3') {
+    console.log('Highlighting buttons to flip or rotate the image...');
+    highlightButtonsByRotate();
+  }
+}
 
 
 
@@ -79,31 +118,7 @@ window.onload = () => {
   resize();
 };
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   // const targetElement = document.querySelector('.flexrow.app');
-//   const targetElement = document.body; 
-//   if (targetElement) {
-//     const select = document.createElement('select');
-//     select.innerHTML = `
-//       <option value="option1">选项 1</option>
-//       <option value="option2">选项 2</option>
-//       <option value="option3">选项 3</option>
-//     `;
 
-//     targetElement.appendChild(select);
-
-//     select.addEventListener('change', () => {
-//       const selectedValue = select.value;
-//       if (selectedValue === 'option1') {
-//         alert('您选择了选项 1');
-//       } else if (selectedValue === 'option2') {
-//         alert('您选择了选项 2');
-//       } else {
-//         alert('您选择了选项 3');
-//       }
-//     });
-//   }
-// });
 // 创建下拉框
 const floatingSelect = document.createElement('select');
 floatingSelect.innerHTML = `
@@ -115,7 +130,7 @@ floatingSelect.innerHTML = `
 
 // 设置样式，使下拉框悬浮
 floatingSelect.style.position = 'fixed'; // 使用 fixed 让它悬浮
-floatingSelect.style.top = '50px'; // 距离页面顶部 10px
+floatingSelect.style.top = '34px'; // 距离页面顶部 10px
 floatingSelect.style.right = '30px'; // 距离页面右侧 10px
 floatingSelect.style.zIndex = '1000'; // 确保下拉框在最上层
 floatingSelect.style.padding = '5px'; // 添加一些内边距
@@ -129,12 +144,36 @@ floatingSelect.addEventListener('change', () => {
   const selectedValue = floatingSelect.value;
   if (selectedValue === 'option1') {
     alert('Highlighed the buttons to resize the image');
+    // highlightButtonsByResize();
   } else if (selectedValue === 'option2') {
     alert('Highlighed the buttons to change image file format');
   } else {
     alert('Highlighed the buttons to flip or rotate the image');
   }
 });
+// let lastValue = floatingSelect.value;
+document.addEventListener('click', () => {
+  const currentValue = floatingSelect.value; // 获取当前选中值
+  if (currentValue === 'option1') {
+    console.log('Resizing buttons highlighted');
+    highlightButtonsByResize();
+  } else if (currentValue === 'option2') {
+    console.log('File format buttons highlighted');
+    highlightButtonsByFormat();
+  } else if (currentValue === 'option3') {
+    console.log('Flip/Rotate buttons highlighted');
+    highlightButtonsByFlipOrRotate();
+  }
+});
+
+// // 持续高亮逻辑，防止页面跳转后状态丢失
+// setInterval(() => {
+//   const currentValue = localStorage.getItem('selectedTask');
+//   if (currentValue) {
+//     highlightBasedOnSelection(currentValue); // 持续检查并高亮
+//   }
+// }, 1000); // 每秒检查一次状态
+
 
 // run once if we see the app injected into the DOM
 const observer = new MutationObserver((mutationsList, observer) => {
@@ -145,6 +184,18 @@ const observer = new MutationObserver((mutationsList, observer) => {
         addedNode.classList.contains('app')
       ) {
         resize();
+        const currentValue = floatingSelect.value; // 获取当前选中值
+        if (currentValue === 'option1') {
+          console.log('Resizing buttons highlighted');
+          highlightButtonsByResize();
+        } else if (currentValue === 'option2') {
+          console.log('File format buttons highlighted');
+          highlightButtonsByFormat();
+        } else if (currentValue === 'option3') {
+          console.log('Flip/Rotate buttons highlighted');
+          highlightButtonsByFlipOrRotate();
+        }
+        // highlightButtonsByResize();
         observer.disconnect();
         break;
       }
@@ -154,20 +205,20 @@ const observer = new MutationObserver((mutationsList, observer) => {
 observer.observe(document.body, { childList: true, subtree: true });
 
 
-const observerButton = new MutationObserver((mutationsList) => {
-  mutationsList.forEach((mutation) => {
-    if (mutation.type === 'childList') {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+// const observerButton = new MutationObserver((mutationsList) => {
+//   mutationsList.forEach((mutation) => {
+//     if (mutation.type === 'childList') {
+//       mutation.addedNodes.forEach((node) => {
+//         if (node.nodeType === Node.ELEMENT_NODE) {
          
-          const buttons = node.querySelectorAll('button');
-          buttons.forEach((button) => {
-            button.classList.add('highlight');
-          });
-        }
-      });
-    }
-  });
-});
+//           const buttons = node.querySelectorAll('.topbar button');
+//           buttons.forEach((button) => {
+//             button.classList.add('highlight');
+//           });
+//         }
+//       });
+//     }
+//   });
+// });
 
-observerButton.observe(document.body, { childList: true, subtree: true });
+// observerButton.observe(document.body, { childList: true, subtree: true });
